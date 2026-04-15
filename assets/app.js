@@ -154,49 +154,59 @@
     if (N === 0) return {error: 'Add at least one spirit.'};
     if (K > N) return {error: 'Need '+K+' season hearts but only '+N+' spirit(s) configured. Add '+(K-N)+' more spirit(s) or reduce ultimate heart costs.'};
 
+    const targetIdx = Math.max(0, Math.min(state.targetIdx || 0, state.ultimates.length - 1));
+    const targetCount = Math.min(cumHearts[targetIdx], K);
     const perSpirit = spirits.map(s => enumSpirit(s, rules));
     let best = null;
     const picks = [];
 
-    const targetIdx = Math.max(0, Math.min(state.targetIdx || 0, state.ultimates.length - 1));
-    const targetCount = Math.min(cumHearts[targetIdx], K);
-
-    // For pruning: for each spirit, pick a single optimistic "good" strategy by score.
-    const bestByScore = perSpirit.map((arr) => {
-      let bestS = arr[0];
-      let bestScore = Infinity;
-      for (const s of arr){
-        const sc = s.cost + rules.cpd * s.days;
-        if (sc < bestScore){
-          bestScore = sc;
-          bestS = s;
-        }
-      }
-      return bestS;
+    // Per-spirit independent minima over its pareto set — used for a SAFE lower
+    // bound on T[target]. Taking min cost and min days separately is valid
+    // because for any chosen strategy s: s.cost >= minCost and s.days >= minDays,
+    // so any real sumC >= sum of minCost and any real sumD >= sum of minDays.
+    // (Using a single combined score like cost+cpd*days would NOT be a valid bound.)
+    const minCostOf = perSpirit.map(arr => {
+      let m = Infinity; for (const s of arr) if (s.cost < m) m = s.cost; return m;
+    });
+    const minDaysOf = perSpirit.map(arr => {
+      let m = Infinity; for (const s of arr) if (s.days < m) m = s.days; return m;
     });
 
-    function optimisticLowerBoundT(){
-      if (!best || targetCount <= 0) return 0;
-      const candidates = [];
-      for (const p of picks) candidates.push({strat: p.strat});
-      // Add at most one optimistic strategy per remaining spirit.
-      const usedSpirit = new Set(picks.map(p => p.spiritIdx));
-      for (let i = 0; i < N; i++){
-        if (usedSpirit.has(i)) continue;
-        candidates.push({strat: bestByScore[i]});
+    function lowerBoundT(nextI){
+      if (targetCount <= 0) return 0;
+      // Candidate pool: current picks (exact) + all remaining spirits (optimistic)
+      const costs = [];
+      const days = [];
+      for (const p of picks){ costs.push(p.strat.cost); days.push(p.strat.days); }
+      for (let j = nextI; j < N; j++){
+        costs.push(minCostOf[j]);
+        days.push(minDaysOf[j]);
       }
-      const k = Math.min(targetCount, candidates.length);
-      return bestFirstGroup(candidates, k, rules).T;
+      if (costs.length < targetCount) return 0;
+      costs.sort((a,b) => a-b);
+      days.sort((a,b) => a-b);
+      let sumC = 0, sumD = 0;
+      for (let t = 0; t < targetCount; t++){ sumC += costs[t]; sumD += days[t]; }
+      return Math.max(Math.ceil((sumC - rules.pass)/rules.cpd), sumD);
     }
 
     function rec(i, used, cost, days){
       if (used > K) return;
       if (N - i + used < K) return;
-      if (best && used >= targetCount){
-        // If we already have enough picks to potentially form the target group,
-        // see if even the best-case completion could beat current best.
-        const lb = optimisticLowerBoundT();
-        if (lb >= best.tScore) return;
+
+      // Safe target-aware pruning: if even the optimistic lower bound on T[target]
+      // for any completion of this branch already meets or exceeds the best tScore,
+      // nothing in this subtree can improve. Requires a VALID lower bound — see above.
+      if (best){
+        const lb = lowerBoundT(i);
+        if (lb > best.tScore) return;
+        // Also prune on Tmax (= final sumC, sumD over all K picks) for tiebreakers
+        // when lb == best.tScore: if the partial Tmax already exceeds best.Tmax,
+        // the full Tmax can only grow, so no improvement on the secondary metric either.
+        if (lb === best.tScore){
+          const partialTmax = Math.max(Math.ceil((cost - rules.pass)/rules.cpd), days);
+          if (partialTmax > best.Tmax) return;
+        }
       }
 
       if (i === N){
@@ -212,9 +222,11 @@
         }
         return;
       }
+      // Skip spirit i (don't use it in the plan)
       if (N - (i+1) + used >= K){
         rec(i+1, used, cost, days);
       }
+      // Use spirit i with each Pareto-optimal strategy
       if (used < K){
         for (const s of perSpirit[i]){
           picks.push({spiritIdx: i, strat: s});
@@ -229,10 +241,12 @@
     return {best, cumHearts, targetIdx};
   }
 
+  // ---------- Date ----------
   function addDays(s, n){ const [y,m,d]=s.split('-').map(Number); const dt=new Date(Date.UTC(y,m-1,d)); dt.setUTCDate(dt.getUTCDate()+n); return dt; }
   function fmtDate(dt){ return dt.toLocaleDateString('en-US',{month:'short',timeZone:'UTC'})+' '+dt.getUTCDate(); }
   function dayDate(start, n){ try { return fmtDate(addDays(start, n-1)); } catch(e){ return '?'; } }
 
+  // ---------- Renderers ----------
   function renderSeasonInputs(){
     document.getElementById('s-name').value = state.seasonName;
     document.getElementById('s-start').value = state.startDate;
@@ -308,6 +322,15 @@
     return '<span class="pill pb">Buy '+opt.buys.join('+')+'c</span><span class="pill ps">Skip '+opt.skips.join('+')+'c ('+opt.days+'d)</span>';
   }
 
+  function stageInfo(opt){
+    if (!opt || (opt.k === 'none' && opt.buys.length === 0 && opt.skips.length === 0)) return {kind:'buy', text:'(no items)'};
+    if (opt.k === 'buy') return {kind:'buy', text:'Buy '+opt.buys[0]+'c'};
+    if (opt.k === 'both') return {kind:'buy', text:'Buy '+opt.buys.join('+')+'c'};
+    if (opt.k === 'skip') return {kind:'skip', text:'Skip ('+opt.days+'d)'};
+    if (opt.k === 'skipboth') return {kind:'skip', text:'Skip both ('+opt.days+'d)'};
+    return {kind:'mixed', text:'Buy '+opt.buys[0]+'c | skip '+opt.skips[0]+'c ('+opt.days+'d)'};
+  }
+
   function renderSvg(best, completedMap){
     const usedIdxs = state.spirits.map((_,i)=>i).filter(i => completedMap.has(i));
     const Nu = usedIdxs.length;
@@ -339,7 +362,8 @@
       const xc = leftPad + colW*col + colW/2;
       svg += '<text x="'+xc+'" y="16" text-anchor="middle" style="font-size:12px;font-weight:500;fill:var(--color-text-primary);">'+escHtml(shortName(sp.name, spIdx))+'</text>';
       const opts = info.strat.opts;
-      for (let li=0; li<5; li++){
+
+      for (let li = 0; li < 5; li++){
         const x = leftPad + colW*col + 6;
         const y = topPad + li*rowH + 6;
         const cw = colW - 12, ch = rowH - 12;
@@ -349,12 +373,13 @@
           continue;
         }
 
-        const opt = opts[4 - li];
+        const opt = opts[4 - li]; // li=1 -> Lv4 (opts[3]), li=4 -> Lv1 (opts[0])
         if (!opt || (opt.buys.length === 0 && opt.skips.length === 0 && opt.k === 'none')){
           continue;
         }
 
         if (opt.k === 'cheap' || opt.k === 'exp'){
+          // mixed: split vertically — green buy cell on top, amber skip cell below
           const gap = 2;
           const subH = (ch - gap) / 2;
           svg += cell(x, y, cw, subH, 'buy', 'Buy '+opt.buys[0]+'c', 10);
@@ -585,6 +610,7 @@
       const t = e.target;
       if (t.classList.contains('ult-h')){
         state.ultimates[+t.dataset.idx].hearts = Math.max(0, +t.value || 0);
+        // Update summary text without re-rendering inputs
         let acc=0;
         const cumStr = state.ultimates.map(u=>(acc+=+u.hearts||0)).join(', ');
         const tIdx = state.targetIdx;
@@ -611,6 +637,7 @@
     });
   }
 
+  // Init
   renderSeasonInputs();
   renderSpirits();
   renderUltimates();
