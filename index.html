@@ -36,7 +36,7 @@
       </div>
 
       <div class="sect">
-        <div class="sect-head"><h3>Rules</h3><button class="btn-sm" id="reset-btn">Reset to Carnival defaults</button></div>
+        <div class="sect-head"><h3>Rules</h3><div style="display:flex;align-items:center;gap:6px;"><select id="season-picker" class="btn-sm" style="display:none;"></select><button class="btn-sm" id="reset-btn">Load season</button></div></div>
         <div class="card">
           <div class="rg" style="margin-bottom:12px;">
             <div class="rl"><label>Candles / day</label><input type="number" id="r-cpd"></div>
@@ -82,6 +82,7 @@
     </div>
   </div>
 
+  <script src="assets/seasons.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>

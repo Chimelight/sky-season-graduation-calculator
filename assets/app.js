@@ -12,7 +12,20 @@
     });
   }
 
+  function cloneSeason(s){
+    return {
+      seasonName: s.seasonName,
+      startDate: s.startDate,
+      rules: Object.assign({}, s.rules),
+      spirits: s.spirits.map(sp => ({name: sp.name, levels: sp.levels.map(l => l.slice())})),
+      ultimates: s.ultimates.map(u => Object.assign({}, u)),
+      targetIdx: s.targetIdx || 0,
+    };
+  }
+
   function defaultState(){
+    const seasons = window.SEASONS;
+    if (seasons && seasons.length > 0) return cloneSeason(seasons[0]);
     return {
       seasonName: 'Carnival',
       startDate: '2026-04-17',
@@ -618,7 +631,9 @@
       });
     });
     document.getElementById('reset-btn').addEventListener('click', () => {
-      state = defaultState();
+      const seasons = window.SEASONS || [];
+      const idx = +document.getElementById('season-picker').value || 0;
+      state = seasons[idx] ? cloneSeason(seasons[idx]) : defaultState();
       renderSeasonInputs();
       renderSpirits();
       renderUltimates();
@@ -701,6 +716,25 @@
   }
 
   // Init
+  (function initSeasonPicker(){
+    const seasons = window.SEASONS || [];
+    const picker = document.getElementById('season-picker');
+    if (seasons.length === 0 || !picker) return;
+    picker.innerHTML = seasons.map((s, i) =>
+      '<option value="'+i+'">'+escAttr(s.label || s.seasonName)+'</option>'
+    ).join('');
+    if (seasons.length > 1) picker.style.display = '';
+    picker.addEventListener('change', () => {
+      const idx = +picker.value || 0;
+      if (seasons[idx]){
+        state = cloneSeason(seasons[idx]);
+        renderSeasonInputs();
+        renderSpirits();
+        renderUltimates();
+        scheduleRender();
+      }
+    });
+  })();
   renderSeasonInputs();
   renderSpirits();
   renderUltimates();
