@@ -6,7 +6,13 @@ Live site: [chimelight.github.io/sky-season-graduation-calculator](https://chime
 
 ## Preview
 
-![Open Graph / social preview card](preview.png)
+<p align="center">
+  <img
+    src="./preview.png"
+    alt="Sky Season Graduation Calculator — social preview card"
+    width="800"
+  />
+</p>
 
 ## Project Structure
 
