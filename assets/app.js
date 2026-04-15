@@ -1,5 +1,34 @@
 (function(){
 
+  // ── Theme toggle ─────────────────────────────────────────────────────────
+  (function(){
+    const root = document.documentElement;
+    const btn  = document.getElementById('theme-btn');
+    const MOON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    const SUN  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>';
+
+    function systemTheme(){ return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    function effectiveTheme(){ return root.dataset.theme || systemTheme(); }
+
+    function applyTheme(theme){
+      root.setAttribute('data-theme', theme);
+      btn.innerHTML = theme === 'dark' ? SUN : MOON;
+      btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      try { localStorage.setItem('theme', theme); } catch(e){}
+    }
+
+    // Initialise icon (theme attribute already set by inline script if saved)
+    applyTheme(effectiveTheme());
+
+    btn.addEventListener('click', function(){ applyTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'); });
+
+    // Keep in sync when system preference changes and no manual override
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e){
+      if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'dark' : 'light');
+    });
+  })();
+  // ─────────────────────────────────────────────────────────────────────────
+
   const MAX_SPIRITS = 6;
 
   let renderQueued = false;
