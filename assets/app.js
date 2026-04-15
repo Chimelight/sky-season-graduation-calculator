@@ -96,17 +96,17 @@
       } else if (items.length === 1){
         const c = items[0];
         lvlOpts.push([
-          {cost:c, days:0, desc:'Buy '+c+'c', buys:[c], skips:[], k:'buy', lvl:i+1},
-          {cost:0, days:fk, desc:'Skip '+c+'c ('+fk+'d)', buys:[], skips:[c], k:'skip', lvl:i+1},
+          {cost:c, days:0, desc:'Buy '+c+'C', buys:[c], skips:[], k:'buy', lvl:i+1},
+          {cost:0, days:fk, desc:'Skip '+c+'C ('+fk+'D)', buys:[], skips:[c], k:'skip', lvl:i+1},
         ]);
       } else {
         const sorted = items.slice(0,2).sort((a,b)=>b-a);
         const exp = sorted[0], cheap = sorted[1];
         lvlOpts.push([
-          {cost:exp+cheap, days:0, desc:'Buy both '+exp+'+'+cheap+'c', buys:[exp,cheap], skips:[], k:'both', lvl:i+1},
-          {cost:cheap, days:hk, desc:'Buy '+cheap+'c, skip '+exp+'c ('+hk+'d)', buys:[cheap], skips:[exp], k:'cheap', lvl:i+1},
-          {cost:exp, days:hk, desc:'Buy '+exp+'c, skip '+cheap+'c ('+hk+'d)', buys:[exp], skips:[cheap], k:'exp', lvl:i+1},
-          {cost:0, days:fk, desc:'Skip both ('+fk+'d)', buys:[], skips:[exp,cheap], k:'skipboth', lvl:i+1},
+          {cost:exp+cheap, days:0, desc:'Buy both '+exp+'+'+cheap+'C', buys:[exp,cheap], skips:[], k:'both', lvl:i+1},
+          {cost:cheap, days:hk, desc:'Buy '+cheap+'C, skip '+exp+'C ('+hk+'D)', buys:[cheap], skips:[exp], k:'cheap', lvl:i+1},
+          {cost:exp, days:hk, desc:'Buy '+exp+'C, skip '+cheap+'C ('+hk+'D)', buys:[exp], skips:[cheap], k:'exp', lvl:i+1},
+          {cost:0, days:fk, desc:'Skip both ('+fk+'D)', buys:[], skips:[exp,cheap], k:'skipboth', lvl:i+1},
         ]);
       }
     }
@@ -252,9 +252,9 @@
     let acc = 0;
     for (const u of state.ultimates){ acc += Math.max(0, +u.hearts || 0); cumHearts.push(acc); }
     const K = acc;
-    if (state.ultimates.length === 0 || K === 0) return {error: 'Add at least one ultimate gift.'};
-    if (N === 0) return {error: 'Add at least one spirit.'};
-    if (K > N) return {error: 'Need '+K+' season hearts but only '+N+' spirit(s) configured. Add '+(K-N)+' more spirit(s) or reduce ultimate heart costs.'};
+    if (state.ultimates.length === 0 || K === 0) return {error: 'Add At Least One Ultimate Gift.'};
+    if (N === 0) return {error: 'Add At Least One Spirit.'};
+    if (K > N) return {error: 'Need '+K+' Season Hearts but only '+N+' spirit(s) configured. Add '+(K-N)+' more spirit(s) or reduce ultimate heart costs.'};
 
     const targetIdx = Math.max(0, Math.min(state.targetIdx || 0, state.ultimates.length - 1));
     const targetCount = Math.min(cumHearts[targetIdx], K);
@@ -342,7 +342,7 @@
     }
 
     rec(0, 0, 0, 0);
-    if (!best) return {error: 'No feasible plan found.'};
+    if (!best) return {error: 'No Feasible Plan Found.'};
     return {best, cumHearts, targetIdx};
   }
 
@@ -361,7 +361,7 @@
     ['l1f','l1h','l2f','l2h','l3f','l3h','l4f','l4h'].forEach(k => {
       document.getElementById('r-'+k).value = state.rules[k];
     });
-    document.getElementById('page-title').textContent = (state.seasonName || 'Season') + ' — ultimate gift calculator';
+    document.getElementById('page-title').textContent = (state.seasonName || 'Season') + ' — Ultimate Gift Calculator';
   }
 
   function renderSpirits(){
@@ -372,13 +372,13 @@
         const c1 = (items[0] !== undefined && items[0] !== '') ? items[0] : '';
         const c2 = (items[1] !== undefined && items[1] !== '') ? items[1] : '';
         return '<div class="lvl-row"><span class="lvl-label">Lv '+(li+1)+'</span>'+
-               '<input type="number" class="sp-cost" data-spirit="'+idx+'" data-lvl="'+li+'" data-pos="0" value="'+c1+'" placeholder="cost">'+
+               '<input type="number" class="sp-cost" data-spirit="'+idx+'" data-lvl="'+li+'" data-pos="0" value="'+c1+'" placeholder="Cost">'+
                '<input type="number" class="sp-cost" data-spirit="'+idx+'" data-lvl="'+li+'" data-pos="1" value="'+c2+'" placeholder="(2nd)"></div>';
       }).join('');
       return '<div class="card spirit-card">'+
         '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">'+
           '<input type="text" class="sp-name" data-spirit="'+idx+'" value="'+escAttr(sp.name)+'" style="flex:1;font-weight:500;min-width:0;">'+
-          '<button class="btn-x" data-action="rm-spirit" data-idx="'+idx+'" title="Remove spirit">×</button>'+
+          '<button class="btn-x" data-action="rm-spirit" data-idx="'+idx+'" title="Remove Spirit">×</button>'+
         '</div>'+ lvlsHtml + '</div>';
     }).join('');
 
@@ -402,11 +402,11 @@
     list.innerHTML = state.ultimates.map((u, idx) => {
       const checked = idx === state.targetIdx ? ' checked' : '';
       return '<div class="ult-row">'+
-        '<span style="min-width:90px;font-size:13px;">'+ordinal(idx+1)+' ultimate</span>'+
+        '<span style="min-width:90px;font-size:13px;">'+ordinal(idx+1)+' Ultimate</span>'+
         '<span class="lbl-sm">+</span>'+
         '<input type="number" class="ult-h" data-idx="'+idx+'" value="'+u.hearts+'" min="0" style="width:60px;">'+
-        '<span class="lbl-sm">season hearts</span>'+
-        '<label class="tgt"><input type="radio" name="tgt-ult" class="tgt-r" data-idx="'+idx+'"'+checked+'>prioritize</label>'+
+        '<span class="lbl-sm">Season Hearts</span>'+
+        '<label class="tgt"><input type="radio" name="tgt-ult" class="tgt-r" data-idx="'+idx+'"'+checked+'>Prioritize</label>'+
         '<button class="btn-x" data-action="rm-ult" data-idx="'+idx+'" title="Remove">×</button>'+
         '</div>';
     }).join('');
@@ -415,29 +415,29 @@
     const totalNeed = acc;
     const tIdx = state.targetIdx;
     document.getElementById('ult-summary').innerHTML = state.ultimates.length
-      ? 'Cumulative hearts at each ultimate: '+cumStr+'. Plan completes '+totalNeed+' / '+state.spirits.length+' spirits. Optimizing for: <b>'+ordinal(tIdx+1)+' ultimate</b> (earliest available).'
+      ? 'Cumulative hearts at each Ultimate: '+cumStr+'. Plan completes '+totalNeed+' / '+state.spirits.length+' spirits. Optimizing for: <b>'+ordinal(tIdx+1)+' Ultimate</b> (Earliest Available).'
       : 'Add at least one ultimate gift.';
   }
 
   function strategyBadge(opt){
     if (!opt) return '—';
     if (opt.k === 'none' && opt.buys.length === 0 && opt.skips.length === 0) return '<span class="lbl-sm">—</span>';
-    if (opt.k === 'buy' || opt.k === 'both') return '<span class="pill pb">Buy '+opt.buys.join('+')+'c</span>';
-    if (opt.k === 'skip' || opt.k === 'skipboth') return '<span class="pill ps">Skip ('+opt.days+'d)</span>';
-    return '<span class="pill pb">Buy '+opt.buys.join('+')+'c</span><span class="pill ps">Skip '+opt.skips.join('+')+'c ('+opt.days+'d)</span>';
+    if (opt.k === 'buy' || opt.k === 'both') return '<span class="pill pb">Buy '+opt.buys.join('+')+'C</span>';
+    if (opt.k === 'skip' || opt.k === 'skipboth') return '<span class="pill ps">Skip ('+opt.days+'D)</span>';
+    return '<span class="pill pb">Buy '+opt.buys.join('+')+'C</span><span class="pill ps">Skip '+opt.skips.join('+')+'C ('+opt.days+'D)</span>';
   }
 
   function stageInfo(opt){
     if (!opt || (opt.k === 'none' && opt.buys.length === 0 && opt.skips.length === 0)) return {kind:'buy', text:'(no items)'};
-    if (opt.k === 'buy') return {kind:'buy', text:'Buy '+opt.buys[0]+'c'};
-    if (opt.k === 'both') return {kind:'buy', text:'Buy '+opt.buys.join('+')+'c'};
+    if (opt.k === 'buy') return {kind:'buy', text:'Buy '+opt.buys[0]+'C'};
+    if (opt.k === 'both') return {kind:'buy', text:'Buy '+opt.buys.join('+')+'C'};
     if (opt.k === 'skip') return {kind:'skip', text:'Skip ('+opt.days+'d)'};
     if (opt.k === 'skipboth') return {kind:'skip', text:'Skip both ('+opt.days+'d)'};
-    return {kind:'mixed', text:'Buy '+opt.buys[0]+'c | skip '+opt.skips[0]+'c ('+opt.days+'d)'};
+    return {kind:'mixed', text:'Buy '+opt.buys[0]+'C | skip '+opt.skips[0]+'C ('+opt.days+'d)'};
   }
 
   function renderSvg(best, completedMap){
-    const usedIdxs = state.spirits.map((_,i)=>i).filter(i => completedMap.has(i));
+    const usedIdxs = best.order.map(pi => best.picks[pi].spiritIdx);
     const Nu = usedIdxs.length;
     if (Nu === 0) return '';
     const colWmin = 120;
@@ -457,15 +457,22 @@
       let fill, stroke, txt;
       if (kind === 'buy') { fill='#EAF3DE'; stroke='#639922'; txt='#27500A'; }
       else { fill='#FAEEDA'; stroke='#BA7517'; txt='#633806'; }
-      return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="5" fill="'+fill+'" stroke="'+stroke+'" stroke-opacity="0.5" stroke-width="0.8"/>'
-           + '<text x="'+(x+w/2)+'" y="'+(y+h/2+fs*0.36)+'" text-anchor="middle" style="font-size:'+fs+'px;fill:'+txt+';">'+escHtml(text)+'</text>';
+      const lines = text.split('\n');
+      let textSvg = '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="5" fill="'+fill+'" stroke="'+stroke+'" stroke-opacity="0.5" stroke-width="0.8"/>';
+      const lineHeight = fs * 1.2;
+      const totalHeight = (lines.length - 1) * lineHeight;
+      lines.forEach((line, idx) => {
+        const lineY = y + h/2 + fs*0.36 + (idx - (lines.length-1)/2) * lineHeight;
+        textSvg += '<text x="'+(x+w/2)+'" y="'+lineY+'" text-anchor="middle" style="font-size:'+fs+'px;fill:'+txt+';word-break:break-word;">'+escHtml(line)+'</text>';
+      });
+      return textSvg;
     }
 
     usedIdxs.forEach((spIdx, col) => {
       const sp = state.spirits[spIdx];
       const info = completedMap.get(spIdx);
       const xc = leftPad + colW*col + colW/2;
-      svg += '<text x="'+xc+'" y="16" text-anchor="middle" style="font-size:12px;font-weight:500;fill:var(--color-text-primary);">'+escHtml(shortName(sp.name, spIdx))+'</text>';
+      svg += '<text x="'+xc+'" y="16" text-anchor="middle" style="font-size:12px;font-weight:500;fill:var(--color-text-primary);">'+'#'+(col+1)+' '+escHtml(shortName(sp.name, spIdx))+'</text>';
       const opts = info.strat.opts;
 
       for (let li = 0; li < 5; li++){
@@ -474,7 +481,7 @@
         const cw = colW - 12, ch = rowH - 12;
 
         if (li === 0){
-          svg += cell(x, y, cw, ch, 'buy', 'Heart '+state.rules.heart+'c');
+          svg += cell(x, y, cw, ch, 'buy', 'Heart '+state.rules.heart+'C');
           continue;
         }
 
@@ -484,19 +491,19 @@
         }
 
         if (opt.k === 'cheap' || opt.k === 'exp'){
-          // mixed: split vertically — green buy cell on top, amber skip cell below
+          // mixed: split horizontally — green buy cell on left, amber skip cell on right
           const gap = 2;
-          const subH = (ch - gap) / 2;
-          svg += cell(x, y, cw, subH, 'buy', 'Buy '+opt.buys[0]+'c', 10);
-          svg += cell(x, y + subH + gap, cw, subH, 'skip', 'Skip '+opt.skips[0]+'c ('+opt.days+'d)', 10);
+          const subW = (cw - gap) / 2;
+          svg += cell(x, y, subW, ch, 'buy', 'Buy\n'+opt.buys[0]+'C', 9);
+          svg += cell(x + subW + gap, y, subW, ch, 'skip', 'Skip\n'+opt.skips[0]+'C\n('+opt.days+'D)', 9);
         } else if (opt.k === 'buy'){
-          svg += cell(x, y, cw, ch, 'buy', 'Buy '+opt.buys[0]+'c');
+          svg += cell(x, y, cw, ch, 'buy', 'Buy '+opt.buys[0]+'C');
         } else if (opt.k === 'skip'){
-          svg += cell(x, y, cw, ch, 'skip', 'Skip ('+opt.days+'d)');
+          svg += cell(x, y, cw, ch, 'skip', 'Skip ('+opt.days+'D)');
         } else if (opt.k === 'both'){
-          svg += cell(x, y, cw, ch, 'buy', 'Buy '+opt.buys.join('+')+'c');
+          svg += cell(x, y, cw, ch, 'buy', 'Buy '+opt.buys.join('+')+'C');
         } else if (opt.k === 'skipboth'){
-          svg += cell(x, y, cw, ch, 'skip', 'Skip both ('+opt.days+'d)');
+          svg += cell(x, y, cw, ch, 'skip', 'Skip both ('+opt.days+'D)');
         }
       }
     });
@@ -510,30 +517,30 @@
     const totalDays = best.picks.reduce((s,p)=>s+p.strat.days,0);
     const earned = rules.pass + rules.cpd * best.Tmax;
     let p = '🎁 ' + state.seasonName + ' — Fastest Ultimate Gift Route\n\n';
-    p += '**TL;DR** (optimizing for '+ordinal(targetIdx+1)+' ultimate earliest)\n';
+    p += '**TL;DR** (Optimizing for '+ordinal(targetIdx+1)+' Ultimate Earliest)\n';
     best.Ts.forEach((T, i) => {
       const mark = i === targetIdx ? ' ★' : '';
-      p += '• ' + ordinal(i+1) + ' Ultimate (' + cumHearts[i] + ' season hearts): Day ' + T + ' (' + dayDate(state.startDate, T) + ')' + mark + '\n';
+      p += '• ' + ordinal(i+1) + ' Ultimate (' + cumHearts[i] + ' Season Hearts): Day ' + T + ' (' + dayDate(state.startDate, T) + ')' + mark + '\n';
     });
-    p += '\n_Requires Season Pass (+'+rules.pass+' candle starter). '+state.spirits.length+' spirits available, '+cumHearts[cumHearts.length-1]+' hearts needed for all ultimate gifts._\n\n';
-    p += '**Per-spirit strategy** (in completion order)\n';
+    p += '\n_Requires Season Pass (+'+rules.pass+' Candle Starter). '+state.spirits.length+' Spirits Available, '+cumHearts[cumHearts.length-1]+' Hearts Needed for All Ultimate Gifts._\n\n';
+    p += '**Per-Spirit Strategy** (in completion order)\n';
     best.order.forEach((pi, i) => {
       const pick = best.picks[pi];
       const sp = state.spirits[pick.spiritIdx];
       const s = pick.strat;
-      p += '\n__'+(i+1)+'. '+sp.name+'__ — '+s.cost+'c, '+s.days+' invite days';
+      p += '\n__'+(i+1)+'. '+sp.name+'__ — '+s.cost+'C, '+s.days+' Invite Days';
       for (let li=0; li<4; li++){
         const o = s.opts[li];
         if (o && o.desc !== '(no items at this level)') p += '\n  Lv '+(li+1)+': '+o.desc;
       }
-      p += '\n  Lv 5: Buy heart ('+rules.heart+'c)\n';
+      p += '\n  Lv 5: Buy Heart ('+rules.heart+'C)\n';
     });
     const usedSet = new Set(best.picks.map(pk => pk.spiritIdx));
     const unused = state.spirits.filter((_,i)=>!usedSet.has(i));
     if (unused.length){
-      p += '\n_Skipped entirely: '+unused.map(s=>s.name).join(', ')+' (not needed)._\n';
+      p += '\n_Skipped Entirely: '+unused.map(s=>s.name).join(', ')+' (Not Needed)._\n';
     }
-    p += '\n**Invite schedule** (1 invite/day, sequential)\n```\n';
+    p += '\n**Invite Schedule** (1 invite/day, sequential)\n```\n';
     let day = 1;
     let nextUlt = 0;
     let cumDone = 0;
@@ -551,24 +558,24 @@
       } else {
         for (const ph of phases){
           const end = day + ph[1] - 1;
-          p += 'Day '+(day===end?day:day+'-'+end)+': invite '+nm+' ('+ph[1]+'d, Lv '+ph[0]+' skip)\n';
+          p += 'Day '+(day===end?day:day+'-'+end)+': Invite '+nm+' ('+ph[1]+'D, Lv '+ph[0]+' Skip)\n';
           day = end + 1;
         }
       }
       cumDone++;
       while (nextUlt < cumHearts.length && cumDone >= cumHearts[nextUlt]){
         const T = best.Ts[nextUlt];
-        p += '   → '+ordinal(nextUlt+1)+' Ultimate available @ Day '+T+' ('+dayDate(state.startDate, T)+')\n';
+        p += '   → '+ordinal(nextUlt+1)+' Ultimate Available @ Day '+T+' ('+dayDate(state.startDate, T)+')\n';
         nextUlt++;
       }
     }
-    if (day <= best.Tmax) p += 'Day '+(day===best.Tmax?day:day+'-'+best.Tmax)+': accumulate candles\n';
+    if (day <= best.Tmax) p += 'Day '+(day===best.Tmax?day:day+'-'+best.Tmax)+': Accumulate Candles\n';
     p += '```\n\n';
-    p += '**Candle accounting**\n';
-    p += '• Earned by Day '+best.Tmax+': '+earned+'c ('+rules.pass+' pass + '+rules.cpd+'×'+best.Tmax+')\n';
-    p += '• Spent: '+totalCost+'c\n';
-    p += '• Surplus: '+(earned-totalCost)+'c\n';
-    p += '• Invite days used: '+totalDays+' / '+best.Tmax+' available\n';
+    p += '**Candle Accounting**\n';
+    p += '• Earned by Day '+best.Tmax+': '+earned+'C ('+rules.pass+' Pass + '+rules.cpd+'×'+best.Tmax+')\n';
+    p += '• Spent: '+totalCost+'C\n';
+    p += '• Surplus: '+(earned-totalCost)+'C\n';
+    p += '• Invite Days Used: '+totalDays+' / '+best.Tmax+' Available\n';
     return p;
   }
 
@@ -607,35 +614,48 @@
     best.Ts.forEach((T, i) => {
       const date = dayDate(state.startDate, T);
       const isTarget = i === r.targetIdx;
-      const tgtPill = isTarget ? '<span class="target-badge">target</span>' : '';
-      html += '<div class="m"><div class="ml">'+ordinal(i+1)+' ultimate ('+cumHearts[i]+' hearts)'+tgtPill+'</div><div class="mv">Day '+T+'</div><div class="ms">'+date+'</div></div>';
+      const tgtPill = isTarget ? '<span class="target-badge">Target</span>' : '';
+      html += '<div class="m"><div class="ml">'+ordinal(i+1)+' Ultimate ('+cumHearts[i]+' Hearts)'+tgtPill+'</div><div class="mv">Day '+T+'</div><div class="ms">'+date+'</div></div>';
     });
-    html += '<div class="m"><div class="ml">Total candles spent</div><div class="mv">'+totalCost+'c</div><div class="ms">Earned by D'+best.Tmax+': '+earned+'c (surplus '+(earned-totalCost)+')</div></div>';
-    html += '<div class="m"><div class="ml">Invite days used</div><div class="mv">'+totalDays+' / '+best.Tmax+'</div><div class="ms">1 invite per day</div></div>';
+    html += '<div class="m"><div class="ml">Total Candles Spent</div><div class="mv">'+totalCost+'C</div><div class="ms">Earned by D'+best.Tmax+': '+earned+'C (Surplus '+(earned-totalCost)+')</div></div>';
+    html += '<div class="m"><div class="ml">Invite Days Used</div><div class="mv">'+totalDays+' / '+best.Tmax+'</div><div class="ms">1 Invite per day</div></div>';
     html += '</div>';
 
     const completedMap = new Map();
     best.picks.forEach((p, pi) => completedMap.set(p.spiritIdx, {orderInPlan: best.order.indexOf(pi), strat: p.strat}));
 
-    html += '<h4>Per-spirit strategy</h4>';
-    html += '<div class="card" style="overflow-x:auto;"><table class="t"><thead><tr><th>Spirit</th><th>Lv 1</th><th>Lv 2</th><th>Lv 3</th><th>Lv 4</th><th>Cost</th><th>Days</th></tr></thead><tbody>';
+    html += '<h4>Per-Spirit Strategy</h4>';
+
+    const usedSpirits = [];
+    const unusedSpirits = [];
     state.spirits.forEach((sp, idx) => {
+      if (completedMap.has(idx)) {
+        usedSpirits.push({sp, idx, order: completedMap.get(idx).orderInPlan});
+      } else {
+        unusedSpirits.push({sp, idx});
+      }
+    });
+    usedSpirits.sort((a,b) => a.order - b.order);
+
+    html += '<div class="card" style="overflow-x:auto;"><table class="t"><thead><tr><th>Spirit</th><th style="text-align: center;">Lv 1</th><th style="text-align: center;">Lv 2</th><th style="text-align: center;">Lv 3</th><th style="text-align: center;">Lv 4</th><th>Cost</th><th>Days</th></tr></thead><tbody>';
+
+    [...usedSpirits, ...unusedSpirits].forEach(({sp, idx}) => {
       const info = completedMap.get(idx);
       if (info){
-        html += '<tr><td style="font-weight:500;">'+escHtml(sp.name)+' <span class="pill pw">#'+(info.orderInPlan+1)+'</span></td>';
-        for (let li=0; li<4; li++) html += '<td>'+strategyBadge(info.strat.opts[li])+'</td>';
-        html += '<td>'+info.strat.cost+'c</td><td>'+info.strat.days+'d</td></tr>';
+        html += '<tr><td style="font-weight:500;"><span class="pill pw">#'+(info.orderInPlan+1)+'</span> '+escHtml(sp.name)+'</td>';
+        for (let li=0; li<4; li++) html += '<td style="text-align: center;">'+strategyBadge(info.strat.opts[li])+'</td>';
+        html += '<td>'+info.strat.cost+'C</td><td>'+info.strat.days+'D</td></tr>';
       } else {
-        html += '<tr style="opacity:0.45;"><td>'+escHtml(sp.name)+'</td><td colspan="4" style="font-style:italic;color:var(--color-text-secondary);">Not used in plan</td><td>—</td><td>—</td></tr>';
+        html += '<tr style="opacity:0.45;"><td>'+escHtml(sp.name)+'</td><td colspan="4" style="font-style:italic;color:var(--color-text-secondary);">Not Used in Plan</td><td>—</td><td>—</td></tr>';
       }
     });
     html += '</tbody></table></div>';
-    html += '<div class="note">Plus Lv 5 heart ('+rules.heart+'c) per used spirit. Pill #N = completion order in the plan.</div>';
+    html += '<div class="note">Plus Lv 5 Heart ('+rules.heart+'C) per used spirit. Pill #N = completion order in the plan.</div>';
 
-    html += '<h4>Tree map (bottom-up, used spirits only)</h4>';
-    html += '<div class="card" style="overflow-x:auto;">'+renderSvg(best, completedMap)+'<div class="legend"><span><span class="pill pb">■</span> buy</span><span><span class="pill ps">■</span> friendship-skip</span></div></div>';
+    html += '<h4>Tree Map (Bottom-up, Used Spirits Only)</h4>';
+    html += '<div class="card" style="overflow-x:auto;">'+renderSvg(best, completedMap)+'<div class="legend"><span><span class="pill pb">■</span> Buy</span><span><span class="pill ps">■</span> Friendship-skip</span></div></div>';
 
-    html += '<h4>Discord post (English)</h4>';
+    html += '<h4>Discord Post (English)</h4>';
     const post = genPost(best, cumHearts, r.targetIdx);
     html += '<div class="post-w"><button class="cpy btn-sm" id="cpy-btn">Copy</button><pre class="post">'+escHtml(post)+'</pre></div>';
 
@@ -646,7 +666,7 @@
   function bindStaticInputs(){
     document.getElementById('s-name').addEventListener('input', e => {
       state.seasonName = e.target.value;
-      document.getElementById('page-title').textContent = (state.seasonName || 'Season') + ' — ultimate gift calculator';
+      document.getElementById('page-title').textContent = (state.seasonName || 'Season') + ' — Ultimate Gift Calculator';
       scheduleRender();
     });
     document.getElementById('s-start').addEventListener('input', e => {
@@ -721,7 +741,7 @@
         let acc=0;
         const cumStr = state.ultimates.map(u=>(acc+=+u.hearts||0)).join(', ');
         const tIdx = state.targetIdx;
-        document.getElementById('ult-summary').innerHTML = 'Cumulative hearts at each ultimate: '+cumStr+'. Plan completes '+acc+' / '+state.spirits.length+' spirits. Optimizing for: <b>'+ordinal(tIdx+1)+' ultimate</b> (earliest available).';
+        document.getElementById('ult-summary').innerHTML = 'Cumulative hearts at each Ultimate: '+cumStr+'. Plan completes '+acc+' / '+state.spirits.length+' spirits. Optimizing for: <b>'+ordinal(tIdx+1)+' Ultimate</b> (Earliest Available).';
         scheduleRender();
       }
     });
