@@ -1,0 +1,22 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g opacity="0.25">
+<path d="M32 4V60Z" fill="black"/>
+<path d="M32 4V60" stroke="#0160F7" stroke-width="0.8" stroke-dasharray="2 2"/>
+</g>
+<g opacity="0.25">
+<path d="M4 32H60Z" fill="black"/>
+<path d="M4 32H60" stroke="#0160F7" stroke-width="0.8" stroke-dasharray="2 2"/>
+</g>
+<path d="M32 8C32 26 38 32 56 32" stroke="url(#paint0_linear_10_19)" stroke-width="8" stroke-linecap="round"/>
+<path d="M32 56C32 38 26 32 8 32" stroke="url(#paint1_linear_10_19)" stroke-width="8" stroke-linecap="round"/>
+<defs>
+<linearGradient id="paint0_linear_10_19" x1="32" y1="8" x2="56" y2="8" gradientUnits="userSpaceOnUse">
+<stop stop-color="#6BB4FF"/>
+<stop offset="1" stop-color="#0160F7"/>
+</linearGradient>
+<linearGradient id="paint1_linear_10_19" x1="8" y1="32" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0160F7"/>
+<stop offset="1" stop-color="#003A99"/>
+</linearGradient>
+</defs>
+</svg>
