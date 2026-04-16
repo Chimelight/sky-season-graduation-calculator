@@ -18,6 +18,7 @@ Live site: [chimelight.github.io/sky-season-ultimate-gift-calculator](https://ch
 
 - `index.html`: page structure
 - `assets/seasons.js`: season data (spirits, costs, rules) — add new seasons here
+- `assets/i18n.js`: internationalization module — translations, `window.t()`, `window.setLang()`, language persistence
 - `assets/styles.css`: all styles (CSS custom properties for light/dark theming)
 - `assets/app.js`: all logic and rendering
 
@@ -51,6 +52,16 @@ Edit `assets/seasons.js` and prepend a new entry to the `window.SEASONS` array (
   targetIdx: 0,                     // index of the ultimate to target by default
 }
 ```
+
+## Internationalization
+
+The app supports multiple languages via `assets/i18n.js`. Currently available: **English** and **Simplified Chinese (简体中文)**. The selected language is persisted to `localStorage`.
+
+To add a new language:
+1. Add a new entry to `TRANSLATIONS` in `assets/i18n.js`, mirroring all keys from the `en` block.
+2. Add an ordinal formatter to `ORDINALS`.
+3. Add the locale code to `DATE_LOCALES` and a date formatter branch in `window.formatDate` if needed.
+4. Append `{ code: 'xx-XX', label: 'Language Name' }` to `window.LANGS`.
 
 ## Notes
 

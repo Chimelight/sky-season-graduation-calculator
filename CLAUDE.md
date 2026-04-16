@@ -13,10 +13,11 @@ python3 -m http.server 8080
 
 ## Architecture
 
-The app is a single-page static calculator with four files:
+The app is a single-page static calculator with five files:
 
 - `index.html` — static shell; all dynamic content is rendered by JS into `#spirits-list`, `#ults-list`, `#ult-summary`, and `#result-out`
 - `assets/seasons.js` — season data configuration; exposes `window.SEASONS` (array, newest first); loaded before `app.js`
+- `assets/i18n.js` — internationalization module; exposes `window.t(key, vars)`, `window.setLang(code)`, `window.getLang()`, `window.LANGS`, `window.ordinal`, `window.formatDate`; loaded before `app.js`
 - `assets/app.js` — all logic and rendering, wrapped in a single IIFE
 - `assets/styles.css` — all styles using CSS custom properties for light/dark theming
 
@@ -27,3 +28,5 @@ The app is a single-page static calculator with four files:
 **Rendering**: The result section renders a day-by-day schedule table plus a copyable post template. Spirit cards and ultimate rows are rendered imperatively into the DOM from state on every `renderResult()` call.
 
 **Adding a season**: Prepend a new entry to `window.SEASONS` in `assets/seasons.js`. The picker and `defaultState()` pick it up automatically — no changes to `app.js` needed.
+
+**i18n** (`i18n.js`): All user-visible strings go through `window.t(key, vars)`. Static DOM elements use `data-i18n="key"` attributes (applied on load and on `langchange`). Dynamic strings call `t()` directly at render time. `app.js` listens to the `window` `langchange` event and calls `scheduleRender()` to re-render. Language preference is saved to `localStorage`. To add a language, add entries to `TRANSLATIONS`, `ORDINALS`, `DATE_LOCALES`, and `window.LANGS` in `i18n.js`.
