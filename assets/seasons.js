@@ -13,9 +13,9 @@
 
 window.SEASONS = [
   {
-    id: 'season-of-carnival-beta',
-    label: '2026 Season of Carnival (Beta)',
-    seasonName: 'Season of Carnival (Beta)',
+    id: 'season-of-carnival',
+    label: '2026 Season of Carnival',
+    seasonName: 'Season of Carnival',
     startDate: '2026-04-17',
     rules: { cpd:6, pass:30, heart:3, l1f:4, l1h:2, l2f:6, l2h:3, l3f:8, l3h:4, l4f:10, l4h:5 },
     spirits: [
