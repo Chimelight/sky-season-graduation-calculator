@@ -128,7 +128,6 @@ body {
   font-size: 13px;
   cursor: pointer;
   appearance: none;
-  -webkit-appearance: none;
   transition: color 0.12s ease, background-color 0.12s ease, border-color 0.12s ease;
 }
 .lang-select:hover { color: var(--color-text-primary); background-color: var(--color-background-secondary); border-color: var(--color-border-secondary); }
@@ -156,6 +155,7 @@ input[type=number], input[type=date], input[type=text] {
   background: var(--color-background-primary);
   color: var(--color-text-primary);
   font-family: inherit;
+  appearance: none;
 }
 input:focus { outline: none; box-shadow: 0 0 0 2px rgba(100,150,200,0.3); }
 
@@ -228,7 +228,8 @@ input:focus { outline: none; box-shadow: 0 0 0 2px rgba(100,150,200,0.3); }
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
 }
-.cc .rl { display: flex; flex-direction: column; gap: 3px; }
+/* min-width:0 lets grid items shrink below iOS Safari's large date-input min-content size */
+.cc .rl { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .cc .rl label { font-size: 11px; color: var(--color-text-secondary); }
 /* inputs inherit width:100% from the base rule and fill their grid cells */
 
@@ -303,7 +304,6 @@ input:focus { outline: none; box-shadow: 0 0 0 2px rgba(100,150,200,0.3); }
 .cc .btn-sm { font-size: 12px; padding: 4px 10px; cursor: pointer; }
 .cc select.btn-sm {
   appearance: none;
-  -webkit-appearance: none;
   background-color: var(--color-background-primary);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888780'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
