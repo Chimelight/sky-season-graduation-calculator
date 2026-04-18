@@ -18,7 +18,8 @@ Live site: [chimelight.github.io/sky-season-ultimate-gift-calculator](https://ch
 
 - `index.html`: page structure
 - `assets/seasons.js`: season data (spirits, costs, rules) — add new seasons here
-- `assets/i18n.js`: internationalization module — translations, `window.t()`, `window.setLang()`, language persistence
+- `assets/i18n.js`: internationalization core — English strings, `window.t()`, `window.setLang()`, language persistence
+- `assets/i18n.<code>.js`: per-language translation files (e.g. `i18n.zh-CN.js`, `i18n.bn.js`)
 - `assets/styles.css`: all styles (CSS custom properties for light/dark theming)
 - `assets/app.js`: all logic and rendering
 
@@ -55,13 +56,13 @@ Edit `assets/seasons.js` and prepend a new entry to the `window.SEASONS` array (
 
 ## Internationalization
 
-The app supports multiple languages via `assets/i18n.js`. Currently available: **English** and **Simplified Chinese (简体中文)**. The selected language is persisted to `localStorage`.
+The app supports multiple languages. Currently available: **English**, **Simplified Chinese (简体中文)**, and **Bengali (বাংলা)**. The selected language is persisted to `localStorage`.
 
 To add a new language:
-1. Add a new entry to `TRANSLATIONS` in `assets/i18n.js`, mirroring all keys from the `en` block.
-2. Add an ordinal formatter to `ORDINALS`.
-3. Add the locale code to `DATE_LOCALES` and a date formatter branch in `window.formatDate` if needed.
-4. Append `{ code: 'xx-XX', label: 'Language Name' }` to `window.LANGS`.
+1. Create `assets/i18n.<code>.js` following the structure of an existing language file (e.g. `i18n.zh-CN.js`).
+2. Add `<script src="assets/i18n.<code>.js"></script>` in `index.html` before `i18n.js`.
+
+Each language file registers itself into `window.TRANSLATIONS`, `window.ORDINALS`, `window.DATE_LOCALES`, and `window.LANGS`.
 
 ## Notes
 

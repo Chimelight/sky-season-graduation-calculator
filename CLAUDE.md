@@ -13,11 +13,12 @@ python3 -m http.server 8080
 
 ## Architecture
 
-The app is a single-page static calculator with five files:
+The app is a single-page static calculator with these files:
 
 - `index.html` — static shell; all dynamic content is rendered by JS into `#spirits-list`, `#ults-list`, `#ult-summary`, and `#result-out`
 - `assets/seasons.js` — season data configuration; exposes `window.SEASONS` (array, newest first); loaded before `app.js`
-- `assets/i18n.js` — internationalization module; exposes `window.t(key, vars)`, `window.setLang(code)`, `window.getLang()`, `window.LANGS`, `window.ordinal`, `window.formatDate`; loaded before `app.js`
+- `assets/i18n.<code>.js` — per-language translation files (e.g. `i18n.zh-CN.js`, `i18n.bn.js`); each registers into `window.TRANSLATIONS`, `window.ORDINALS`, `window.DATE_LOCALES`, `window.LANGS`; must be loaded before `i18n.js`
+- `assets/i18n.js` — internationalization core; English strings + logic; exposes `window.t(key, vars)`, `window.setLang(code)`, `window.getLang()`, `window.LANGS`, `window.ordinal`, `window.formatDate`; loaded after language files, before `app.js`
 - `assets/app.js` — all logic and rendering, wrapped in a single IIFE
 - `assets/styles.css` — all styles using CSS custom properties for light/dark theming
 
@@ -29,4 +30,4 @@ The app is a single-page static calculator with five files:
 
 **Adding a season**: Prepend a new entry to `window.SEASONS` in `assets/seasons.js`. The picker and `defaultState()` pick it up automatically — no changes to `app.js` needed.
 
-**i18n** (`i18n.js`): All user-visible strings go through `window.t(key, vars)`. Static DOM elements use `data-i18n="key"` attributes (applied on load and on `langchange`). Dynamic strings call `t()` directly at render time. `app.js` listens to the `window` `langchange` event and calls `scheduleRender()` to re-render. Language preference is saved to `localStorage`. To add a language, add entries to `TRANSLATIONS`, `ORDINALS`, `DATE_LOCALES`, and `window.LANGS` in `i18n.js`.
+**i18n**: All user-visible strings go through `window.t(key, vars)`. Static DOM elements use `data-i18n="key"` attributes (applied on load and on `langchange`). Dynamic strings call `t()` directly at render time. `app.js` listens to the `window` `langchange` event and calls `scheduleRender()` to re-render. Language preference is saved to `localStorage`. To add a language, create `assets/i18n.<code>.js` following the structure of an existing language file, then add a `<script>` tag for it in `index.html` before `i18n.js`.
